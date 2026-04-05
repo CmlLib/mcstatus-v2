@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/v1/servers", tags=["servers"])
 async def server_status_batch(
     targets: str = Query(..., description="Comma-separated target list (e.g. ip1:port1,ip2:port2)"),
 ):
-    target_list = list(dict.fromkeys(t.strip() for t in targets.split(",") if t.strip()))
+    target_list = list({t.strip() for t in targets.split(",") if t.strip()})
 
     if len(target_list) == 0:
         raise InvalidParameter("targets must not be empty")
