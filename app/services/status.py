@@ -61,23 +61,29 @@ async def _probe(target: str) -> dict:
             "data": None,
         }
 
-    # Save to DB
-    async with async_session() as session:
-        session.add(History(
-            target=target,
-            timestamp=now,
-            status=result["status"],
-            latency_ms=result["latency_ms"],
-            data=result["data"],
-        ))
-        await session.commit()
+    # Save to DB (non-blocking: failure should not break the response)
+    try:
+        async with async_session() as session:
+            session.add(History(
+                target=target,
+                timestamp=now,
+                status=result["status"],
+                latency_ms=result["latency_ms"],
+                data=result["data"],
+            ))
+            await session.commit()
+    except Exception:
+        logger.error("Failed to save history target=%s", target, exc_info=True)
 
     # Cache in Redis
-    await redis.set(
-        _cache_key(target),
-        json.dumps(result),
-        ex=config.CACHE_TTL,
-    )
+    try:
+        await redis.set(
+            _cache_key(target),
+            json.dumps(result),
+            ex=config.CACHE_TTL,
+        )
+    except Exception:
+        logger.error("Failed to cache status target=%s", target, exc_info=True)
 
     return result
 

@@ -2,7 +2,9 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
+from app import config
 from app.database import engine
 from app.errors import register_error_handlers
 from app.logging import setup_logging
@@ -18,6 +20,8 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting MCStatus API")
+    if config.ADMIN_PASSWORD == "admin":
+        logger.warning("ADMIN_PASSWORD is set to default. Change it before deploying to production!")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database tables ready")
@@ -28,6 +32,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="MCStatus API", version="0.1.0", lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config.CORS_ORIGINS.split(","),
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 register_error_handlers(app)
 app.include_router(servers_router)
 app.include_router(admin_router)
