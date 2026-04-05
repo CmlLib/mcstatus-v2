@@ -14,7 +14,7 @@ class History(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     target: Mapped[str] = mapped_column(String(100), nullable=False)
-    timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False)
     latency_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)

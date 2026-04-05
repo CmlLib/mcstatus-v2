@@ -32,7 +32,7 @@ def _cache_key(target: str) -> str:
 
 
 async def _probe(target: str) -> dict:
-    """대상 서버에 TCP 통신 후 결과 dict를 반환한다."""
+    """Probe target server via TCP and return result dict."""
     host, port = _parse_target(target)
     now = datetime.now(timezone.utc)
 
@@ -61,7 +61,7 @@ async def _probe(target: str) -> dict:
             "data": None,
         }
 
-    # DB 저장
+    # Save to DB
     async with async_session() as session:
         session.add(History(
             target=target,
@@ -72,7 +72,7 @@ async def _probe(target: str) -> dict:
         ))
         await session.commit()
 
-    # Redis 캐싱
+    # Cache in Redis
     await redis.set(
         _cache_key(target),
         json.dumps(result),
@@ -85,13 +85,13 @@ async def _probe(target: str) -> dict:
 async def get_status(target: str) -> dict:
     target = _normalize_target(target)
 
-    # 1. Redis 캐시 확인
+    # 1. Check Redis cache
     cached = await redis.get(_cache_key(target))
     if cached:
         logger.debug("Cache hit target=%s", target)
         return json.loads(cached)
 
-    # 2. Single Flight로 probe
+    # 2. Probe with Single Flight
     logger.debug("Cache miss target=%s", target)
     return await flight.do(target, lambda: _probe(target))
 
@@ -114,7 +114,7 @@ async def get_status_batch(targets: list[str]) -> list[dict]:
 
     logger.info("Batch request total=%d cached=%d miss=%d", len(targets), len(targets) - len(missing), len(missing))
 
-    # 2. Cache miss 대상만 동시 조회
+    # 2. Probe cache-missed targets concurrently
     if missing:
         probed = await asyncio.gather(
             *(flight.do(t, lambda t=t: _probe(t)) for t in missing)

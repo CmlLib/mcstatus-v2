@@ -3,7 +3,7 @@ from typing import Any, Callable, Coroutine
 
 
 class SingleFlight:
-    """같은 키에 대해 동시에 하나의 코루틴만 실행하고, 나머지는 결과를 공유받는다."""
+    """Deduplicates concurrent calls for the same key. Only one coroutine runs; others share the result."""
 
     def __init__(self) -> None:
         self._futures: dict[str, asyncio.Future[Any]] = {}

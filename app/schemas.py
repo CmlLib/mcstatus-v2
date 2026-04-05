@@ -37,8 +37,7 @@ class Pagination(BaseModel):
     total_pages: int
 
 
-class HistoryResponse(BaseModel):
-    target: str
+class AdminHistoryResponse(BaseModel):
     pagination: Pagination
     records: list[HistoryRecord]
 

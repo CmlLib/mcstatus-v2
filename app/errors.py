@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class AppError(HTTPException):
-    """통일된 에러 응답을 위한 기본 예외 클래스"""
+    """Base exception class for unified error responses."""
 
     def __init__(self, status_code: int, code: str, message: str):
         self.code = code

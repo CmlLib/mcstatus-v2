@@ -25,6 +25,6 @@ def setup_logging() -> None:
     handler.setFormatter(formatter)
     root.handlers = [handler]
 
-    # 외부 라이브러리 로그 레벨 조정
+    # Suppress noisy third-party loggers
     logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
