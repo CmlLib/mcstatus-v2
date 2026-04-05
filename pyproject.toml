@@ -8,6 +8,7 @@ dependencies = [
     "asyncpg>=0.31.0",
     "fastapi>=0.135.3",
     "mcstatus>=13.0.1",
+    "python-dotenv>=1.2.2",
     "python-json-logger>=4.1.0",
     "redis>=7.4.0",
     "sqlalchemy>=2.0.49",

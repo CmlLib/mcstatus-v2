@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.database import engine
+from app.errors import register_error_handlers
 from app.logging import setup_logging
 from app.models import Base
 from app.redis import redis
@@ -27,8 +28,14 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="MCStatus API", version="0.1.0", lifespan=lifespan)
+register_error_handlers(app)
 app.include_router(servers_router)
 app.include_router(admin_router)
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     import uvicorn

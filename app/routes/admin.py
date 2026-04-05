@@ -1,14 +1,15 @@
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from sqlalchemy import text
 
+from app.auth import require_admin
 from app.database import async_session
 from app.redis import redis
 from app.schemas import HealthResponse
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
+router = APIRouter(prefix="/api/v1/admin", tags=["admin"], dependencies=[Depends(require_admin)])
 
 
 @router.get("/health", response_model=HealthResponse)

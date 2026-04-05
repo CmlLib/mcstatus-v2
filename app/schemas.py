@@ -30,9 +30,16 @@ class HistoryRecord(BaseModel):
     data: dict[str, Any] | None = None
 
 
+class Pagination(BaseModel):
+    page: int
+    page_size: int
+    total: int
+    total_pages: int
+
+
 class HistoryResponse(BaseModel):
     target: str
-    hours: int
+    pagination: Pagination
     records: list[HistoryRecord]
 
 
