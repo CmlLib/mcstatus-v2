@@ -1,0 +1,15 @@
+[project]
+name = "mcstatus-v2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi>=0.135.3",
+    "mcstatus>=13.0.1",
+    "python-json-logger>=4.1.0",
+    "redis>=7.4.0",
+    "sqlalchemy>=2.0.49",
+    "uvicorn>=0.43.0",
+]
